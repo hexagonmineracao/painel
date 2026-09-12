@@ -38,7 +38,16 @@ if sys.platform == "win32":
         except (AttributeError, ValueError):
             pass
 
-BASE_DIR = Path(__file__).resolve().parent
+# Quando empacotado com PyInstaller (--onefile), __file__ aponta pra uma
+# pasta temporária de extração — o .env precisa ficar visível e editável do
+# lado de fora, na pasta real do .exe (sys.executable), não dentro do
+# bundle. Sem isso, trocar a senha do MySQL no PC de destino exigiria
+# recompilar o executável a cada vez.
+if getattr(sys, "frozen", False):
+    BASE_DIR = Path(sys.executable).resolve().parent
+else:
+    BASE_DIR = Path(__file__).resolve().parent
+
 load_dotenv(BASE_DIR / ".env")
 
 MYSQL = {

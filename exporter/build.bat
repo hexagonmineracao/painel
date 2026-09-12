@@ -7,7 +7,9 @@ cd /d "%~dp0"
 python -m pip install -r requirements.txt
 if errorlevel 1 goto :erro
 
-python -m PyInstaller --onefile --name PainelWebSync --add-data ".env;." sync.py
+REM .env fica FORA do executavel (arquivo ao lado do .exe), pra dar pra
+REM editar host/senha do MySQL no PC de destino sem precisar recompilar.
+python -m PyInstaller --onefile --name PainelWebSync sync.py
 if errorlevel 1 goto :erro
 
 echo.

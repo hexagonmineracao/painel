@@ -10,7 +10,13 @@ param(
 )
 
 $TaskName = "PainelWebSync"
-$ExePath = Join-Path $PSScriptRoot "dist\PainelWebSync.exe"
+
+# Aceita tanto o .exe ao lado deste script (pacote de instalacao) quanto em
+# dist\ (rodando direto na pasta de desenvolvimento apos build.bat).
+$ExePath = Join-Path $PSScriptRoot "PainelWebSync.exe"
+if (-not (Test-Path $ExePath)) {
+    $ExePath = Join-Path $PSScriptRoot "dist\PainelWebSync.exe"
+}
 
 if ($Remover) {
     Unregister-ScheduledTask -TaskName $TaskName -Confirm:$false -ErrorAction SilentlyContinue
@@ -19,7 +25,14 @@ if ($Remover) {
 }
 
 if (-not (Test-Path $ExePath)) {
-    Write-Host "ERRO: $ExePath nao encontrado. Rode build.bat primeiro." -ForegroundColor Red
+    Write-Host "ERRO: PainelWebSync.exe nao encontrado (nem ao lado deste script, nem em dist\)." -ForegroundColor Red
+    exit 1
+}
+
+$EnvPath = Join-Path (Split-Path $ExePath -Parent) ".env"
+if (-not (Test-Path $EnvPath)) {
+    Write-Host "ERRO: .env nao encontrado em $(Split-Path $ExePath -Parent)." -ForegroundColor Red
+    Write-Host "Copie o .env junto com o PainelWebSync.exe antes de instalar a tarefa."
     exit 1
 }
 
