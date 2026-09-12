@@ -1,0 +1,7 @@
+.env
+logs/
+sync_state.json
+build/
+dist/
+*.spec
+__pycache__/

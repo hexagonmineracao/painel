@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Painel de Pesagens — SACYR</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ───────── Tela de login ───────── -->
+<div id="tela-login" class="tela-login">
+  <form id="form-login" class="card-login">
+    <svg width="48" height="48" viewBox="0 0 120 120" class="logo-mark" aria-hidden="true">
+      <g stroke="currentColor" stroke-width="13" stroke-linecap="round">
+        <line x1="67.17" y1="18.14" x2="96.65" y2="35.16" />
+        <line x1="99.84" y1="45.28" x2="99.84" y2="79.32" />
+        <line x1="92.67" y1="87.14" x2="63.19" y2="104.16" />
+        <line x1="52.83" y1="101.86" x2="23.35" y2="84.84" />
+        <line x1="20.16" y1="74.72" x2="20.16" y2="40.68" />
+        <line x1="27.33" y1="32.86" x2="56.81" y2="15.84" />
+      </g>
+    </svg>
+    <p class="marca">Hexagon Mineração</p>
+    <h1>Painel de Pesagens</h1>
+
+    <label>
+      Usuário
+      <input type="text" id="login-usuario" required autocomplete="username" autocapitalize="off" />
+    </label>
+    <label>
+      Senha
+      <input type="password" id="login-senha" required autocomplete="current-password" />
+    </label>
+    <button type="submit">Entrar</button>
+    <p id="login-erro" class="erro" hidden></p>
+  </form>
+</div>
+
+<!-- ───────── Dashboard ───────── -->
+<div id="dashboard" class="dashboard" hidden>
+
+  <header class="topo">
+    <h1>Dashboard</h1>
+
+    <div class="usuario usuario-desktop">
+      <div class="avatar">H</div>
+      <div>
+        <div class="usuario-nome">Hexagon Terraplanagem</div>
+        <div class="usuario-papel">Cliente</div>
+      </div>
+      <button id="btn-usuarios" class="btn-sair" title="Gerenciar usuários" hidden>Usuários</button>
+      <button id="btn-sair" class="btn-sair" title="Sair">Sair</button>
+    </div>
+
+    <button id="btn-menu-mobile" class="btn-menu-mobile" aria-label="Abrir menu">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+      </svg>
+    </button>
+  </header>
+
+  <nav id="menu-mobile" class="menu-mobile" hidden>
+    <div class="usuario-nome" id="menu-mobile-nome">Hexagon Terraplanagem</div>
+    <button id="btn-usuarios-mobile" class="menu-mobile-item" hidden>Usuários</button>
+    <button id="btn-sair-mobile" class="menu-mobile-item">Sair</button>
+  </nav>
+
+  <section class="filtros">
+    <div class="filtro-grupo">
+      <label>PERÍODO</label>
+      <select id="periodo">
+        <option value="hoje">Hoje</option>
+        <option value="7d">Últimos 7 dias</option>
+        <option value="30d">Últimos 30 dias</option>
+        <option value="custom">Personalizado</option>
+      </select>
+    </div>
+    <div class="filtro-grupo" id="grupo-datas" hidden>
+      <label>DE</label>
+      <input type="date" id="data-inicio" />
+      <label>ATÉ</label>
+      <input type="date" id="data-fim" />
+    </div>
+    <div class="filtro-grupo">
+      <label>UNIDADE DE PESO</label>
+      <select id="unidade">
+        <option value="t">Toneladas (t)</option>
+        <option value="kg">Quilos (kg)</option>
+      </select>
+    </div>
+    <button id="btn-atualizar" class="btn-atualizar">↻ Atualizar</button>
+    <div class="status-live">
+      <span class="ponto-vivo"></span> ao vivo · <span id="hora-atualizacao">--:--:--</span>
+    </div>
+  </section>
+
+  <section class="cartoes">
+    <div class="cartao">
+      <div class="cartao-titulo"><span class="dot dot-teal"></span>Peso Médio (<span class="unid-label">t</span>)</div>
+      <div class="cartao-valor" id="valor-peso-medio">0</div>
+      <div class="cartao-sub" id="sub-peso-medio">—</div>
+    </div>
+    <div class="cartao">
+      <div class="cartao-titulo"><span class="dot dot-purple"></span>Veículos</div>
+      <div class="cartao-valor" id="valor-veiculos">0</div>
+      <div class="cartao-sub" id="sub-veiculos">—</div>
+    </div>
+    <div class="cartao">
+      <div class="cartao-titulo"><span class="dot dot-blue"></span>Total de Pesagens</div>
+      <div class="cartao-valor" id="valor-total-pesagens">0</div>
+      <div class="cartao-sub" id="sub-total-pesagens">—</div>
+    </div>
+    <div class="cartao">
+      <div class="cartao-titulo"><span class="dot dot-green"></span>Peso Total (<span class="unid-label">t</span>)</div>
+      <div class="cartao-valor" id="valor-peso-total">0</div>
+      <div class="cartao-sub" id="sub-peso-total">—</div>
+    </div>
+  </section>
+
+  <section class="graficos">
+    <div class="grafico-card">
+      <div class="grafico-titulo"><span class="dot dot-blue"></span>Pesagens por Produto</div>
+      <canvas id="grafico-produto"></canvas>
+    </div>
+    <div class="grafico-card">
+      <div class="grafico-titulo"><span class="dot dot-purple"></span>Pesagens por Motorista</div>
+      <canvas id="grafico-motorista"></canvas>
+    </div>
+  </section>
+
+  <section class="lista-card">
+    <div class="lista-titulo">☰ Pesagens</div>
+    <div class="tabela-scroll">
+      <table id="tabela-pesagens">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Data</th>
+            <th>Hora</th>
+            <th>Placa</th>
+            <th>Motorista</th>
+            <th>Produto</th>
+            <th>Transportadora</th>
+            <th>Peso</th>
+            <th>NF-e</th>
+          </tr>
+        </thead>
+        <tbody id="tabela-corpo">
+        </tbody>
+      </table>
+      <p id="lista-vazia" class="lista-vazia" hidden>Nenhum dado no período selecionado.</p>
+    </div>
+  </section>
+
+</div>
+
+<!-- ───────── Modal: gerenciar usuários ───────── -->
+<div id="modal-usuarios" class="modal-overlay" hidden>
+  <div class="modal-card">
+    <div class="modal-topo">
+      <h2>Usuários</h2>
+      <button id="btn-fechar-usuarios" class="btn-fechar">✕</button>
+    </div>
+
+    <table class="tabela-usuarios">
+      <thead>
+        <tr><th>Usuário</th><th>Nome</th><th>Papel</th><th></th></tr>
+      </thead>
+      <tbody id="corpo-usuarios"></tbody>
+    </table>
+
+    <form id="form-novo-usuario" class="form-novo-usuario">
+      <h3>Novo usuário</h3>
+      <div class="form-linha">
+        <input type="text" id="novo-username" placeholder="usuário" required autocapitalize="off" />
+        <input type="text" id="novo-nome" placeholder="nome (opcional)" />
+        <input type="password" id="novo-senha" placeholder="senha" required minlength="6" />
+        <select id="novo-role">
+          <option value="admin">admin</option>
+          <option value="colaborador">colaborador</option>
+        </select>
+        <button type="submit">Criar</button>
+      </div>
+      <p id="usuarios-erro" class="erro" hidden></p>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

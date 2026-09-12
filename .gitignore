@@ -1,0 +1,7 @@
+exporter/.env
+exporter/logs/
+exporter/sync_state.json
+exporter/build/
+exporter/dist/
+exporter/*.spec
+exporter/__pycache__/
